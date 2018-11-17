@@ -1,32 +1,97 @@
-.App {
+body {
+  background-image: url('./assets/houndstooth-pattern.png');
+}
+
+p {
+  font-size: larger;
+}
+
+header {
+  background-color: brown;
+  height: 50px;
   text-align: center;
+  margin-bottom: 20px;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
+footer {
+  background-color: brown;
+  height: 100px;
+  
+  text-align: center;
+  margin-top: 20px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.center-horizontal {
+  width: 50%;
+  margin: 0 auto;
+
+}
+
+.game-container {
+  font-size: larger;
+  width: 80%;
+  height: 500px;
+  margin: 0 auto;
+
+  border: 4px dashed brown;
+  border-radius: 12px;
+  padding: 8px;
+
+  position: relative;
+}
+
+/* Center horizontally and vertically inside container. */
+.game-container > .center {
+  
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+
+}
+
+.lang-select-container {
+  width: 20px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  flex-direction: row;
+}
+
+
+input[type=text] {
+  padding: 12px 8px;
+  margin: 8px 0;
+  border: 2px solid brown;
+  background: #f0f0f0;
+  text-align: center;
+  font-size: 1.5em; 
+  border-radius: 100px;
+}
+
+button {
+  font-size: 1.5em;
+  background-color: brown;
+  border: none;
   color: white;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 100px;
+
 }
 
-.App-link {
-  color: #61dafb;
+button:disabled {
+  opacity: 0.5;
+  cursor: auto;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.rooms-container {
+
+}
+
+.rooms-container > li {
+  display: block;
+  list-style-type: none;
 }
