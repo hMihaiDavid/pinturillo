@@ -48,7 +48,7 @@ class App extends Component {
               <AppliedRoute exact path='/rooms' component={PickRoom} global={global} />              
               <AppliedRoute path='/rooms/:id' component={GameRoom} global={global} />
 
-             
+              <Redirect to='/' />
           </Switch>
           </div>
         </Router>

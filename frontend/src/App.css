@@ -21,6 +21,10 @@ footer {
   margin-top: 20px;
 }
 
+canvas {
+  border: 1px solid black;
+}
+
 .center-horizontal {
   width: 50%;
   margin: 0 auto;
@@ -59,7 +63,7 @@ footer {
 }
 
 
-input[type=text] {
+.main-input[type=text] {
   padding: 12px 8px;
   margin: 8px 0;
   border: 2px solid brown;
@@ -67,6 +71,23 @@ input[type=text] {
   text-align: center;
   font-size: 1.5em; 
   border-radius: 100px;
+}
+
+.chat-input {
+  height: 45px;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  
+}
+
+.chat-messages {
+  height: 90%;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  word-break: break-all;
+  font-size: 16px;
+
 }
 
 button {

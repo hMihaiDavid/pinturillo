@@ -94,7 +94,7 @@ class PickNick extends Component {
                     }
                 </div>
                 <form onSubmit={this.handleSubmit}>
-                    <input type='text' placeholder={STRINGS['nickInputPlaceholder']}
+                    <input type='text' placeholder={STRINGS['nickInputPlaceholder']} className='main-input'
                      onChange={this.handleChange} value={this.state.nick} 
                      ref={(e) => this.nickInputDOM = e } />
                 <button type='submit'

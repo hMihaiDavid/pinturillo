@@ -19,15 +19,21 @@ const LANG_TO_IMG = {
 const _STRINGS = {
     'es': {
         "playNow": "Jugar Ya!",
-        "orPickARoom": "... o elige una sala:"
+        "orPickARoom": "... o entra en una sala privada:",
+        "roomCode": "Codigo de la sala...",
+        "addNewPrivateRoom": "+ Nueva sala privada"
     },
     'en': {
         "playNow": "Play Now!",
-        "orPickARoom": "... or choose a room:"
+        "orPickARoom": "... or join a private room:",
+        "roomCode": "Room code...",
+        "addNewPrivateRoom": "+ New private room"
     },
     'ro': {
         "playNow": "Joacă acum!",
-        "orPickARoom": "... sau alegeți o sală:"
+        "orPickARoom": "... sau alegeți o sală privată:",
+        "roomCode": "Codul salei...",
+        "addNewPrivateRoom": "+ Nouă sală privată"
     }
 };
 
@@ -40,13 +46,16 @@ class PickRoom extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {rooms: []};
+        this.state = {code: ''};
+        this.codeInputDOM = null;
     }
 
     componentDidMount() {
         DataService.getRooms().then(rooms => {
             this.setState({rooms: rooms});
         });
+
+        this.codeInputDOM.focus();
     }
     
     /*handleClick = (e) => {
@@ -54,6 +63,17 @@ class PickRoom extends Component {
 
         this.props.onFinish(this.props.name);
     }*/
+
+    handleChange = (evt) => {
+        let s = evt.target.value.trim();
+        if(s === '' || ( s.length <= 10 && /^[a-zA-Z0-9]+$/.test(s) ))
+            this.setState({code: s.toUpperCase()});
+    }
+
+    handleSubmit = (evt) => {
+        evt.preventDefault();
+        console.log(this.state.code);
+    }
 
     render() {
         if(!this.props.global.nick) return <Redirect to='/' />
@@ -66,7 +86,7 @@ class PickRoom extends Component {
         return (
             <div>
                 <div style={{display: 'flex', flexDirection:'row-reverse'}}>
-                    <img src={langObj.src} 
+                    <img src={langObj.src}
                         height={50} width={50}
                     />
                     <p style={{position:'relative', bottom: 15, marginRight:10}}>{langObj.text}</p>
@@ -88,6 +108,23 @@ class PickRoom extends Component {
                 </button>
                 
                 <p style={{textAlign: "center"}}>{STRINGS['orPickARoom']}</p>
+
+                <form onSubmit={this.handleSubmit}>
+                    <div style={{display: 'flex'}} className='center-horizontal'>
+                        <input type='text' value={this.state.code} onChange={this.handleChange} className='main-input'
+                            placeholder={STRINGS['roomCode']}  ref={e => this.codeInputDOM = e} />
+                        <button type='submit' 
+                                style={{display: 'block ', backgroundColor: 'blue', margin:20, width:100}} 
+                                disabled={this.state.code === ''}
+                                className='center-horizontal'>
+                            {'>'}
+                        </button>
+                    </div>
+                </form>
+
+                <button style={{marginTop: 60}}>
+                    {STRINGS['addNewPrivateRoom']}
+                </button>
             </div>
         );
     }
