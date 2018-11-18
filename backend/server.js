@@ -5,6 +5,17 @@ const cors = require('cors');
 
 const draw = require('./draw');
 
+function RoomService() {
+  this.roomIds = [];
+  this.rooms = [];
+
+  for(let i=1; i<20; i++) {
+
+  }
+}
+
+RoomService.prototype.
+
 //app.use(cors());
 
 const io = require('socket.io')(http);
