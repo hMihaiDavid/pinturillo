@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import RealTimeService from '../../services/RealTimeService';
 
 class TheCanvas extends Component {
     constructor(props) {
@@ -13,8 +14,10 @@ class TheCanvas extends Component {
         if(!this.strokeCanvas.getContext) {
             throw new Error("Your browser doesn't support HTML5, please update your browser.");
         }
-        this.strokeCtx = this.strokeCanvas.getContext('2d');    
+        this.strokeCtx = this.strokeCanvas.getContext('2d');
+        this.rtService = new RealTimeService();  
     }
+
 
     draw = () => {
         let ctx = this.mainCtx;
@@ -30,24 +33,58 @@ class TheCanvas extends Component {
     componentDidMount() {
         this.mainCtx = this.mainCanvas.getContext('2d');
         window.requestAnimationFrame(this._draw);
+    
+        this.rtService.onCanvasAction((action, pos) => {
+            console.log(action, pos);
+
+            if(action == 'clear') {
+
+            } else if(action == 'pendown') {
+                this.mouseDown(pos);
+            } else if(action == 'penup') {
+                this.mouseUp(pos);
+            } else if(action == 'stroke') {
+                this.mouseMove(pos);
+            }
+        });
     }
 
     componentWillUnmount() {
 
     }
 
-    handleMouseUp = (evt) => {
-        let {x, y} = this.getMousePos(evt);
-        let ctx = this.strokeCtx;
-        if(!this.penDown) return;
+    myTurn() {
+        return true;
+    }
 
+    handleMouseUp = (evt) => {
+        let pos = this.getMousePos(evt);
+        if(this.myTurn()) {
+            this.rtService.mouseUp(pos);
+            this.mouseUp(pos.x, pos.y)
+        }
+    }
+
+    mouseUp = (x,y) => {
+        let ctx = this.strokeCtx;
+
+        if(!this.penDown) return;
         ctx.lineTo(x,y);
         ctx.stroke();
         this.penDown = false;
     }
 
     handleMouseDown = (evt) => {
-        let {x, y} = this.getMousePos(evt);
+        let pos = this.getMousePos(evt);
+        if(this.myTurn()) {
+            this.rtService.mouseDown(pos);
+            this.mouseDown(pos.x, pos.y);
+        }
+    }
+
+    mouseDown(x, y) {
+        console.log(x,y)
+
         let ctx = this.strokeCtx;
         this.penDown = true;
 
@@ -55,12 +92,17 @@ class TheCanvas extends Component {
         ctx.lineTo(x,y);
         ctx.stroke();
         ctx.beginPath();
-        
-
     }
 
     handleMouseMove = (evt) => {
-        let {x, y} = this.getMousePos(evt);
+        let pos = this.getMousePos(evt);
+        if(this.myTurn()) {
+            if(this.penDown) this.rtService.stroke(pos);
+            this.mouseMove(pos.x, pos.y);
+        }
+    }
+
+    mouseMove(x, y) {
         let ctx = this.strokeCtx;
 
         if(this.penDown)  {
@@ -74,14 +116,14 @@ class TheCanvas extends Component {
        // let ctx = this.strokeCtx;
 
         //ctx.lineTo(x,y); ctx.stroke();
-        this.penDown = false;
+        if(this.myTurn()) this.penDown = false;
     }
 
     getMousePos = (evt) => {
         let rect = this.mainCanvas.getBoundingClientRect();
         return {
-            x: evt.clientX - rect.left,
-            y: evt.clientY - rect.top
+            x: Math.round(evt.clientX - rect.left),
+            y: Math.round(evt.clientY - rect.top)
         }
     }
 

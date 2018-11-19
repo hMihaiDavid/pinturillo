@@ -8,8 +8,8 @@ class RealTimeService {
         if(!RealTimeService.instance) {
             this.sock = openSocket(CONFIG.SOCKET_ENDPOINT);
             console.log(CONFIG.SOCKET_ENDPOINT);
-            this.sock.on('connection', () => {
-                console.log(Math.random()*10000)
+            this.sock.on('disconnect', () => {
+                alert("You have been disconnected from the server.")
             })
 
             RealTimeService.instance = this;
@@ -21,12 +21,42 @@ class RealTimeService {
         return new RealTimeService();
     }
 
-    join = (room) => {
-        this.sock.emit('join', room);
+    join(roomId, nick, cb) {
+        
+        this.sock.emit('join', roomId, nick);
+        this.sock.on('join rep', cb)
     }
 
-    onChatMessage = (cb) => {
+    onChatMessage(cb) {
         this.sock.on('chat', cb);
+    }
+
+    sendChatMessage(txt) {
+        this.sock.emit('chat', String(txt));
+    }
+
+    onCanvasAction(cb) {
+        this.sock.on('pendown', (pos) => cb('pendown', pos));
+        this.sock.on('penup', (pos) => cb('penup', pos) );
+        this.sock.on('stroke', (pos) => { cb('stroke', pos); });
+        this.sock.on('clear', () => cb('clear'));
+
+    }
+
+    mouseUp(pos) {
+        this.sock.emit('penup',pos);
+    }
+
+    mouseDown(pos) {
+        this.sock.emit('pendown', pos)
+    }
+
+    stroke(pos) {
+        this.sock.emit('stroke', pos);
+    }
+
+    clear() {
+        this.sock.emit('clear');
     }
 
 }

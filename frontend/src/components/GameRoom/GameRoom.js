@@ -11,17 +11,36 @@ class GameRoom extends Component {
         super(props);
         this.rtService = new RealTimeService();
         
-        this.state = {chatInput: '', chatMessages: [], users: []};
+        this.state = {chatInput: '', chatMessages: [], users: [], roomId: ''};
         let chatMessagesDOM;
         
     }
-    componenDidMount() {
-        this.rtService.join(this.props.global.nick, this.props.match.params.id);       
+
+    componentDidMount() {
+        this.rtService.join(this.props.match.params.id, this.props.global.nick,
+            (res) => { /* Callback to get an answer */
+                if(res.error == 1) {
+                    alert('Room does not exist.')
+                    throw new Error(JSON.stringify(res));
+                } else if(res.error == 2) {
+                    alert('room is full');
+                    throw new Error(JSON.stringify(res));
+                }
+                this.props.global.setNick(res.nick);
+                this.setState({roomId: this.props.match.params.id});
+                
+            });
+
+            this.rtService.onChatMessage((msg) => {
+                console.log(msg);
+                this.appendMessageToChat(msg);
+            });
     }
 
     componentDidUpdate() {
         this.chatMessagesDOM.scrollTop = this.chatMessagesDOM.scrollHeight;
     }
+
     handleChange = evt => {
         let s = evt.target.value;
         this.setState({chatInput: s});
@@ -32,6 +51,7 @@ class GameRoom extends Component {
             let s = this.state.chatInput.trim();
             if(s==='') return;
             let msg = {type:'msg', text: s, from: this.props.global.nick};
+            this.rtService.sendChatMessage(s);
             this.appendMessageToChat(msg);
         }
     }
@@ -82,8 +102,16 @@ class GameRoom extends Component {
                 return <div><span style={{color: msg.color}}
                                 ><b>{`${msg.from}: `}</b></span><span>{msg.text}</span></div>                
             }
-            else if(msg.type === 'ctrl')
-                return <p>TODO: HANDLE SERVER INFO</p>
+            else if(msg.type === 'info') {
+                // TODO: INTERNATIONALIZE THIS
+                let s='';
+                if(msg.op == 'join')
+                    s = `${msg.nick} has joined the room.`
+                else if(msg.op == 'leave')
+                    s = `${msg.nick} has left the room.`
+
+                return <div><span style={{color:'#945AFF'}}><b>{s}</b></span></div>
+            }
         })
     }
 
