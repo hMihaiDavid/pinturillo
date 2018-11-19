@@ -11,7 +11,7 @@ class GameRoom extends Component {
         super(props);
         this.rtService = new RealTimeService();
         
-        this.state = {chatInput: '', chatMessages: [], users: [], roomId: ''};
+        this.state = {chatInput: '', chatMessages: [], players: [], roomId: ''};
         let chatMessagesDOM;
         
     }
@@ -27,12 +27,12 @@ class GameRoom extends Component {
                     throw new Error(JSON.stringify(res));
                 }
                 this.props.global.setNick(res.nick);
-                this.setState({roomId: this.props.match.params.id});
+                this.setState({ roomId: this.props.match.params.id,
+                                players: res.players || []});
                 
             });
 
             this.rtService.onChatMessage((msg) => {
-                console.log(msg);
                 this.appendMessageToChat(msg);
             });
     }
@@ -60,6 +60,7 @@ class GameRoom extends Component {
     //if(!this.props.global.nick) return <Redirect to='/' />
 
         let chatMessages = this.state.chatMessages;
+        let players = this.state.players;
 
         return (
             <div>
@@ -69,7 +70,9 @@ class GameRoom extends Component {
                         width={800} height={400}>
                         </TheCanvas>
                         <div style={{border:'1px solid black', marginTop: 10, height:'99%', maxHeight:'99%', maxWidth:800}}>
-                            ESTADÍSTICAS DE LOS USUARIOS
+                            {players.map((playerNick) => {
+                                return <span>{playerNick}</span>
+                            })}
                         </div>
                     </div>
                     <div style={{border: '1px solid black', height: 480, width: '99%', marginLeft:10 }}> {/*chat*/}

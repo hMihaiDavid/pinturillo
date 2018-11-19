@@ -67,10 +67,10 @@ function handleJoin(conn, roomId, nick) {
 
     sock.join(room.id+'/data');
     sock.join(room.id+'/chat');
-    sock.emit('join rep', {ok:1, nick:nick});
+    sock.emit('join rep', {ok:1, nick:nick, players: room.players});
     sock.broadcast.to(conn.currentRoom.id+'/chat').emit('chat', {
         type: 'info',
-        op: 'join',
+        op: 'join', //REFACTOR THIS
         nick: nick
     });
     console.log(nick, "joined room", room.id, "(sockid:"+sock.id+")")
@@ -89,17 +89,15 @@ function handleMsg(conn, text) {
 }
 
 function handlePenUp(conn, pos) {
-    /*if(!checkTypePos(pos))
-        return conn.sock.disconnect();*/
-        console.log(pos);
+    if(!checkTypePos(pos))
+        return conn.sock.disconnect();
 
     conn.sock.broadcast.to(conn.currentRoom.id+'/data').emit('penup', pos);
 }
 
 function handlePenDown(conn, pos) {
-    /*if(!checkTypePos(pos))
-        return conn.sock.disconnect();*/
-        console.log(pos);
+    if(!checkTypePos(pos))
+        return conn.sock.disconnect();
 
     conn.sock.broadcast.to(conn.currentRoom.id+'/data').emit('pendown', pos);    
 
@@ -107,8 +105,8 @@ function handlePenDown(conn, pos) {
 
 
 function handleStroke(conn, pos) {
-    /*if(!checkTypePos(pos))
-        return conn.sock.disconnect();*/
+    if(!checkTypePos(pos))
+        return conn.sock.disconnect();
         
     conn.sock.broadcast.to(conn.currentRoom.id+'/data').emit('stroke', pos);
 }

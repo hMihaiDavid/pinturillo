@@ -46,7 +46,7 @@ class PickRoom extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {code: ''};
+        this.state = {code: '', redirectToRoom: false};
         this.codeInputDOM = null;
     }
 
@@ -73,10 +73,12 @@ class PickRoom extends Component {
     handleSubmit = (evt) => {
         evt.preventDefault();
         console.log(this.state.code);
+        this.setState({redirectToRoom: true});
     }
 
     render() {
         if(!this.props.global.nick) return <Redirect to='/' />
+        if(this.state.redirectToRoom) return <Redirect to={`/rooms/${this.state.code}`} />
 
         let STRINGS = _STRINGS[this.props.global.lang];
 

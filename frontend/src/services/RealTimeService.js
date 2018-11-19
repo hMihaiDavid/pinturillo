@@ -7,7 +7,6 @@ class RealTimeService {
     constructor() {
         if(!RealTimeService.instance) {
             this.sock = openSocket(CONFIG.SOCKET_ENDPOINT);
-            console.log(CONFIG.SOCKET_ENDPOINT);
             this.sock.on('disconnect', () => {
                 alert("You have been disconnected from the server.")
             })

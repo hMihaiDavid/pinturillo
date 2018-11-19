@@ -35,16 +35,16 @@ class TheCanvas extends Component {
         window.requestAnimationFrame(this._draw);
     
         this.rtService.onCanvasAction((action, pos) => {
-            console.log(action, pos);
+
 
             if(action == 'clear') {
-
+                
             } else if(action == 'pendown') {
-                this.mouseDown(pos);
+                this.mouseDown(pos.x, pos.y);
             } else if(action == 'penup') {
-                this.mouseUp(pos);
+                this.mouseUp(pos.x, pos.y);
             } else if(action == 'stroke') {
-                this.mouseMove(pos);
+                this.mouseMove(pos.x, pos.y);
             }
         });
     }
@@ -83,11 +83,11 @@ class TheCanvas extends Component {
     }
 
     mouseDown(x, y) {
-        console.log(x,y)
 
         let ctx = this.strokeCtx;
         this.penDown = true;
 
+        ctx.beginPath();
         ctx.moveTo(x,y);
         ctx.lineTo(x,y);
         ctx.stroke();
@@ -112,11 +112,15 @@ class TheCanvas extends Component {
     }
 
     handleMouseLeave = (evt) => {
-       // let {x, y} = this.getMousePos(evt);
+       let pos = this.getMousePos(evt);
        // let ctx = this.strokeCtx;
 
         //ctx.lineTo(x,y); ctx.stroke();
-        if(this.myTurn()) this.penDown = false;
+        if(this.myTurn())  {
+            this.rtService.mouseUp(pos);
+            this.mouseUp(pos.x, pos.y);
+            this.penDown = false;
+        }
     }
 
     getMousePos = (evt) => {
